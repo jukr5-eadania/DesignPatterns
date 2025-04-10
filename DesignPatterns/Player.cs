@@ -13,12 +13,12 @@ namespace DesignPatterns
     {
         private Texture2D sprite;
         private float speed;
-        private Vector2 position;
         private Vector2 origin;
+        private Transform transform = new();
 
         public Player(Vector2 position)
         {
-            this.position = position;
+            transform.Position = position;
             speed = 100;
         }
 
@@ -26,12 +26,12 @@ namespace DesignPatterns
         {
             sprite = content.Load<Texture2D>("Sprites\\fwd\\1fwd");
             origin = new Vector2(sprite.Width / 2, sprite.Height / 2);
-            position.Y -= sprite.Height / 3;
+            transform.Position = new Vector2(transform.Position.X, transform.Position.Y - (sprite.Height / 3));
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(sprite, position, null, Color.White, 0, origin, 1, SpriteEffects.None, 0);
+            spriteBatch.Draw(sprite, transform.Position, null, Color.White, transform.Rotation, origin, transform.Scale, SpriteEffects.None, 0);
         }
 
         public void Update(GameTime gametime)
@@ -47,12 +47,12 @@ namespace DesignPatterns
             }
 
             velocity *= speed;
-            position += velocity * GameWorld.Instance.DeltaTime;
+            transform.Translate(velocity * GameWorld.Instance.DeltaTime);
         }
 
         public void MoveByAddition(Vector2 velocity)
         {
-            position += velocity;
+            transform.Translate(velocity);
         }
     }
 }
