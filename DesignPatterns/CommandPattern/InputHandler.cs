@@ -9,6 +9,26 @@ namespace DesignPatterns.CommandPattern
 {
     public class InputHandler
     {
+        private static InputHandler instance;
+
+        public static InputHandler Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new InputHandler();
+                }
+
+                return instance;
+            }
+        }
+
+        private InputHandler()
+        {
+
+        }
+
         private Dictionary<Keys, ICommand> keybindsUpdate = new();
         private Dictionary<Keys, ICommand> keybindsButtonDown = new();
 

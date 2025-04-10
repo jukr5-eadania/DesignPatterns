@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using DesignPatterns.CommandPattern;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -6,18 +7,33 @@ namespace DesignPatterns
 {
     public class GameWorld : Game
     {
+        private static GameWorld instance;
+
+        public static GameWorld Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new GameWorld();
+                }
+
+                return instance;
+            }
+        }
+
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private Player player;
 
-        CommandPattern.InputHandler inputHandler = new();
+        InputHandler inputHandler = InputHandler.Instance;
 
-        public static float DeltaTime { get; private set; } 
+        public float DeltaTime { get; private set; } 
 
         public static int Height { get; set; }
         public static int Width { get; set; }
 
-        public GameWorld()
+        private GameWorld()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
@@ -29,12 +45,12 @@ namespace DesignPatterns
             GameWorld.Height = _graphics.PreferredBackBufferHeight;
             GameWorld.Width = _graphics.PreferredBackBufferWidth;
             player = new Player(new Vector2(GameWorld.Width / 2, GameWorld.Height));
-            inputHandler.AddUpdateCommand(Keys.A, new CommandPattern.MoveCommand(player, new Vector2(-1, 0)));
-            inputHandler.AddUpdateCommand(Keys.D, new CommandPattern.MoveCommand(player, new Vector2(1, 0)));
-            inputHandler.AddButtonDownCommand(Keys.Q, new CommandPattern.TeleportCommand(player, new Vector2(-1, -1) * 10));
-            inputHandler.AddButtonDownCommand(Keys.E, new CommandPattern.TeleportCommand(player, new Vector2(1, -1) * 10));
-            inputHandler.AddButtonDownCommand(Keys.Z, new CommandPattern.TeleportCommand(player, new Vector2(-1, 1) * 10));
-            inputHandler.AddButtonDownCommand(Keys.C, new CommandPattern.TeleportCommand(player, new Vector2(1, 1) * 10));
+            inputHandler.AddUpdateCommand(Keys.A, new MoveCommand(player, new Vector2(-1, 0)));
+            inputHandler.AddUpdateCommand(Keys.D, new MoveCommand(player, new Vector2(1, 0)));
+            inputHandler.AddButtonDownCommand(Keys.Q, new TeleportCommand(player, new Vector2(-1, -1) * 10));
+            inputHandler.AddButtonDownCommand(Keys.E, new TeleportCommand(player, new Vector2(1, -1) * 10));
+            inputHandler.AddButtonDownCommand(Keys.Z, new TeleportCommand(player, new Vector2(-1, 1) * 10));
+            inputHandler.AddButtonDownCommand(Keys.C, new TeleportCommand(player, new Vector2(1, 1) * 10));
             base.Initialize();
         }
 

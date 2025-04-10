@@ -47,7 +47,7 @@ namespace DesignPatterns
             }
 
             velocity *= speed;
-            position += velocity * GameWorld.DeltaTime;
+            position += velocity * GameWorld.Instance.DeltaTime;
         }
 
         public void MoveByAddition(Vector2 velocity)

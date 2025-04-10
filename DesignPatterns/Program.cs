@@ -1,3 +1,3 @@
-﻿
-using var game = new DesignPatterns.GameWorld();
-game.Run();
+﻿using DesignPatterns;
+
+GameWorld.Instance.Run();
