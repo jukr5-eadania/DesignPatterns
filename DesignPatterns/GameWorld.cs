@@ -1,7 +1,9 @@
 ﻿using DesignPatterns.CommandPattern;
+using DesignPatterns.ComponentPattern;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 
 namespace DesignPatterns
 {
@@ -24,14 +26,13 @@ namespace DesignPatterns
 
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
-        private Player player;
-
-        InputHandler inputHandler = InputHandler.Instance;
+        private List<GameObject> gameObjects = new();
+        private InputHandler inputHandler = InputHandler.Instance;
 
         public float DeltaTime { get; private set; } 
 
-        public static int Height { get; set; }
-        public static int Width { get; set; }
+        public int Height { get; set; }
+        public int Width { get; set; }
 
         private GameWorld()
         {
@@ -42,9 +43,16 @@ namespace DesignPatterns
 
         protected override void Initialize()
         {
-            GameWorld.Height = _graphics.PreferredBackBufferHeight;
-            GameWorld.Width = _graphics.PreferredBackBufferWidth;
-            player = new Player(new Vector2(GameWorld.Width / 2, GameWorld.Height));
+            Height = _graphics.PreferredBackBufferHeight;
+            Width = _graphics.PreferredBackBufferWidth;
+            GameObject playerGo = new();
+            Player player = playerGo.AddComponent<Player>();
+            playerGo.AddComponent<SpriteRenderer>();
+            foreach (var gameObject in gameObjects)
+            {
+                gameObject.Awake();
+            }
+            gameObjects.Add(playerGo);
             inputHandler.AddUpdateCommand(Keys.A, new MoveCommand(player, new Vector2(-1, 0)));
             inputHandler.AddUpdateCommand(Keys.D, new MoveCommand(player, new Vector2(1, 0)));
             inputHandler.AddButtonDownCommand(Keys.Q, new TeleportCommand(player, new Vector2(-1, -1) * 10));
@@ -57,8 +65,10 @@ namespace DesignPatterns
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            player.LoadContent(Content);
-            // TODO: use this.Content to load your game content here
+            foreach (var gameObject in gameObjects)
+            {
+                gameObject.Start();
+            }
         }
 
         protected override void Update(GameTime gameTime)
@@ -68,6 +78,10 @@ namespace DesignPatterns
 
             DeltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
             inputHandler.Execute();
+            foreach (var gameObject in gameObjects)
+            {
+                gameObject.Update();
+            }
 
             base.Update(gameTime);
         }
@@ -76,10 +90,11 @@ namespace DesignPatterns
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
-
             _spriteBatch.Begin();
-            player.Draw(_spriteBatch);
+            foreach (var gameObject in gameObjects)
+            {
+                gameObject.Draw(_spriteBatch);
+            }
             _spriteBatch.End();
 
             base.Draw(gameTime);
