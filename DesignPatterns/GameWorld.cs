@@ -10,6 +10,13 @@ namespace DesignPatterns
         private SpriteBatch _spriteBatch;
         private Player player;
 
+        CommandPattern.InputHandler inputHandler = new();
+
+        public static float DeltaTime { get; private set; } 
+
+        public static int Height { get; set; }
+        public static int Width { get; set; }
+
         public GameWorld()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -19,8 +26,11 @@ namespace DesignPatterns
 
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-            player = new Player();
+            GameWorld.Height = _graphics.PreferredBackBufferHeight;
+            GameWorld.Width = _graphics.PreferredBackBufferWidth;
+            player = new Player(new Vector2(GameWorld.Width / 2, GameWorld.Height));
+            inputHandler.AddCommand(Keys.A, new CommandPattern.MoveCommand(player, new Vector2(-1, 0)));
+            inputHandler.AddCommand(Keys.D, new CommandPattern.MoveCommand(player, new Vector2(1, 0)));
             base.Initialize();
         }
 
@@ -36,7 +46,8 @@ namespace DesignPatterns
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
+            DeltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            inputHandler.Execute();
 
             base.Update(gameTime);
         }
