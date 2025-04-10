@@ -7,25 +7,25 @@ using System.Threading.Tasks;
 
 namespace DesignPatterns.CommandPattern
 {
-    public class MoveCommand : ICommand
+    public class TeleportCommand : ICommand
     {
-        private Vector2 velocity;
         private Player player;
+        private Vector2 velocity;
 
-        public MoveCommand(Player player, Vector2 velocity)
+        public TeleportCommand(Player player, Vector2 velocity)
         {
-            this.velocity = velocity;
             this.player = player;
+            this.velocity = velocity;
         }
 
         public void Execute()
         {
-            player.Move(velocity);
+            player.MoveByAddition(velocity);
         }
 
         public void Undo()
         {
-            player.Move(-velocity);
+            player.MoveByAddition(-velocity);
         }
     }
 }

@@ -29,8 +29,12 @@ namespace DesignPatterns
             GameWorld.Height = _graphics.PreferredBackBufferHeight;
             GameWorld.Width = _graphics.PreferredBackBufferWidth;
             player = new Player(new Vector2(GameWorld.Width / 2, GameWorld.Height));
-            inputHandler.AddCommand(Keys.A, new CommandPattern.MoveCommand(player, new Vector2(-1, 0)));
-            inputHandler.AddCommand(Keys.D, new CommandPattern.MoveCommand(player, new Vector2(1, 0)));
+            inputHandler.AddUpdateCommand(Keys.A, new CommandPattern.MoveCommand(player, new Vector2(-1, 0)));
+            inputHandler.AddUpdateCommand(Keys.D, new CommandPattern.MoveCommand(player, new Vector2(1, 0)));
+            inputHandler.AddButtonDownCommand(Keys.Q, new CommandPattern.TeleportCommand(player, new Vector2(-1, -1) * 10));
+            inputHandler.AddButtonDownCommand(Keys.E, new CommandPattern.TeleportCommand(player, new Vector2(1, -1) * 10));
+            inputHandler.AddButtonDownCommand(Keys.Z, new CommandPattern.TeleportCommand(player, new Vector2(-1, 1) * 10));
+            inputHandler.AddButtonDownCommand(Keys.C, new CommandPattern.TeleportCommand(player, new Vector2(1, 1) * 10));
             base.Initialize();
         }
 
