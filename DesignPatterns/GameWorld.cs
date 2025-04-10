@@ -4,12 +4,13 @@ using Microsoft.Xna.Framework.Input;
 
 namespace DesignPatterns
 {
-    public class Game1 : Game
+    public class GameWorld : Game
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+        private Player player;
 
-        public Game1()
+        public GameWorld()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
@@ -19,14 +20,14 @@ namespace DesignPatterns
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-
+            player = new Player();
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-
+            player.LoadContent(Content);
             // TODO: use this.Content to load your game content here
         }
 
@@ -45,6 +46,10 @@ namespace DesignPatterns
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
+
+            _spriteBatch.Begin();
+            player.Draw(_spriteBatch);
+            _spriteBatch.End();
 
             base.Draw(gameTime);
         }
