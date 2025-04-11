@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using DesignPatterns.ComponentPattern;
+using DesignPatterns.Factory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,10 +16,13 @@ namespace DesignPatterns
     public class Player : Component
     {
         private float speed;
+        private bool canShoot = true;
+        private float shootTimer = 1;
+        private float timeSinceLastShot;
 
         public Player(GameObject gameObject) : base(gameObject)
         {
-            
+
         }
 
         public override void Start()
@@ -43,6 +47,27 @@ namespace DesignPatterns
         public void MoveByAddition(Vector2 velocity)
         {
             gameObject.Transform.Translate(velocity);
+        }
+
+        public void Shoot()
+        {
+            if (canShoot)
+            {
+                canShoot = false;
+                timeSinceLastShot = 0;
+                GameObject laserGo = LaserFactory.Instance.Create();
+                laserGo.Transform.Position = gameObject.Transform.Position;
+                GameWorld.Instance.instantiate(laserGo);
+            }
+        }
+
+        public override void Update()
+        {
+            timeSinceLastShot += GameWorld.Instance.DeltaTime;
+            if (timeSinceLastShot > shootTimer)
+            {
+                canShoot = true;
+            }
         }
     }
 }

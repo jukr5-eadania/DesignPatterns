@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DesignPatterns.ComponentPattern
 {
-    public class Component
+    public class Component : ICloneable
     {
         public GameObject gameObject { get; private set; }
 
@@ -34,6 +34,17 @@ namespace DesignPatterns.ComponentPattern
         public virtual void Draw(SpriteBatch spriteBatch)
         {
 
+        }
+
+        public virtual object Clone()
+        {
+            Component clone = (Component)MemberwiseClone();
+            return clone;
+        }
+
+        public void SetNewGameObject(GameObject gameObject)
+        {
+            this.gameObject = gameObject;
         }
     }
 }

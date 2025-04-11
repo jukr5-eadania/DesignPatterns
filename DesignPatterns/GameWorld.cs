@@ -4,7 +4,9 @@ using DesignPatterns.Factory;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace DesignPatterns
 {
@@ -27,7 +29,11 @@ namespace DesignPatterns
 
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+
         private List<GameObject> gameObjects = new();
+        private List<GameObject> newGameObjects = new();
+        private List<GameObject> destroyedGameObjects = new();
+
         private InputHandler inputHandler = InputHandler.Instance;
 
         public float DeltaTime { get; private set; } 
@@ -69,6 +75,7 @@ namespace DesignPatterns
             inputHandler.AddButtonDownCommand(Keys.E, new TeleportCommand(player, new Vector2(1, -1) * 10));
             inputHandler.AddButtonDownCommand(Keys.Z, new TeleportCommand(player, new Vector2(-1, 1) * 10));
             inputHandler.AddButtonDownCommand(Keys.C, new TeleportCommand(player, new Vector2(1, 1) * 10));
+            inputHandler.AddButtonDownCommand(Keys.Space, new ShootCommand(player));
             base.Initialize();
         }
 
@@ -94,6 +101,7 @@ namespace DesignPatterns
             }
 
             base.Update(gameTime);
+            Cleanup();
         }
 
         protected override void Draw(GameTime gameTime)
@@ -108,6 +116,36 @@ namespace DesignPatterns
             _spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        internal void instantiate(GameObject gameObjectToinstantiate)
+        {
+            newGameObjects.Add(gameObjectToinstantiate);
+        }
+
+        internal void Destroy(GameObject gameObjectToDestroy)
+        {
+            Debug.WriteLine("something destroyed");
+            destroyedGameObjects.Add(gameObjectToDestroy);
+        }
+
+        private void Cleanup()
+        {
+            for (int i = 0; i < newGameObjects.Count; i++)
+            {
+                gameObjects.Add(newGameObjects[i]);
+                newGameObjects[i].Awake();
+            }
+            for (int i = 0; i < newGameObjects.Count; i++)
+            {
+                newGameObjects[i].Start();
+            }
+            for (int i = 0; i < destroyedGameObjects.Count; i++)
+            {
+                gameObjects.Remove(destroyedGameObjects[i]);
+            }
+            destroyedGameObjects.Clear();
+            newGameObjects.Clear();
         }
     }
 }

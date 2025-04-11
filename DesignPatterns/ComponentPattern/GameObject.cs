@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DesignPatterns.ComponentPattern
 {
-    public class GameObject
+    public class GameObject : ICloneable
     {
         public Transform Transform { get; set; } = new();
         private List<Component> components = new();
@@ -70,6 +70,30 @@ namespace DesignPatterns.ComponentPattern
             {
                 component.Draw(spriteBatch);
             }
+        }
+        
+        public Component GetComponent<T>() where T : Component
+        {
+            return components.Find(x => x.GetType() == typeof(T));
+        }
+
+        public Component AddComponentWithExistingValue(Component component)
+        {
+            components.Add(component);
+            return component;
+        }
+
+        public object Clone()
+        {
+            GameObject go = new();
+            foreach (var component in components)
+            {
+                Component comp = (Component)component.Clone();
+                go.AddComponentWithExistingValue(comp);
+                comp.SetNewGameObject(go);
+            }
+
+            return go;
         }
     }
 }
