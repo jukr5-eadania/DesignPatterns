@@ -13,24 +13,25 @@ namespace DesignPatterns.ComponentPattern
         private List<Component> components = new();
         public string Tag { get; set; }
 
-        public T AddComponent<T>() where T : Component
+        public T AddComponent<T>(params object[] additionalParameters) where T : Component
         {
             Type componentType = typeof(T);
-            var constructors = componentType.GetConstructors();
-            var constructor = constructors.FirstOrDefault(c =>
+            try
             {
-                var parameters = c.GetParameters();
-                return parameters.Length == 1 && parameters[0].ParameterType == typeof(GameObject);
-            });
-            if (constructor != null)
-            {
-                T component = (T)Activator.CreateInstance(componentType, this);
+                // Opret en instans ved hjælp af den fundne konstruktør og leverede parametre
+                object[] allParameters = new object[1 + additionalParameters.Length];
+                allParameters[0] = this;
+                Array.Copy(additionalParameters, 0, allParameters, 1, additionalParameters.Length);
+
+                T component = (T)Activator.CreateInstance(componentType, allParameters);
                 components.Add(component);
                 return component;
             }
-            else
+            catch (Exception)
             {
-                throw new InvalidOperationException($"Klassen {componentType.Name} skal have en konstructor med et parameter af typen GameObject.");
+                // Håndter tilfælde, hvor der ikke er en passende konstruktør
+                throw new InvalidOperationException($"Klassen {componentType.Name} har ikke en " +
+                    "konstruktør, der matcher de leverede parametre.");
             }
         }
 

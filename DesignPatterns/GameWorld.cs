@@ -1,5 +1,6 @@
 ﻿using DesignPatterns.CommandPattern;
 using DesignPatterns.ComponentPattern;
+using DesignPatterns.Factory;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -45,14 +46,22 @@ namespace DesignPatterns
         {
             Height = _graphics.PreferredBackBufferHeight;
             Width = _graphics.PreferredBackBufferWidth;
+
             GameObject playerGo = new();
             Player player = playerGo.AddComponent<Player>();
             playerGo.AddComponent<SpriteRenderer>();
+            gameObjects.Add(playerGo);
+
+            
+            gameObjects.Add(EnemyFactory.Instance.CreateEnemy(EnemyType.SLOW));
+            gameObjects.Add(EnemyFactory.Instance.CreateEnemy(EnemyType.FAST));
+
+
             foreach (var gameObject in gameObjects)
             {
                 gameObject.Awake();
             }
-            gameObjects.Add(playerGo);
+
             inputHandler.AddUpdateCommand(Keys.A, new MoveCommand(player, new Vector2(-1, 0)));
             inputHandler.AddUpdateCommand(Keys.D, new MoveCommand(player, new Vector2(1, 0)));
             inputHandler.AddButtonDownCommand(Keys.Q, new TeleportCommand(player, new Vector2(-1, -1) * 10));
