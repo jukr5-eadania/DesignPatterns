@@ -1,4 +1,5 @@
 ﻿using DesignPatterns.ComponentPattern;
+using DesignPatterns.ObjectPool;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -33,7 +34,7 @@ namespace DesignPatterns.Strategy
 
             if (GameWorld.Instance.Height < gameObject.Transform.Position.Y - 50)
             {
-                RespawnAndSetNewPosition();
+                EnemyGameObjectPool.Instance.ReleaseObject(gameObject);
             }
         }
 

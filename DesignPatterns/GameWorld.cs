@@ -1,6 +1,7 @@
 ﻿using DesignPatterns.CommandPattern;
 using DesignPatterns.ComponentPattern;
 using DesignPatterns.Factory;
+using DesignPatterns.ObjectPool;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -36,6 +37,9 @@ namespace DesignPatterns
 
         private InputHandler inputHandler = InputHandler.Instance;
 
+        float lastSpawn;
+        float spawnTime = 3;
+
         public float DeltaTime { get; private set; } 
 
         public int Height { get; set; }
@@ -59,9 +63,9 @@ namespace DesignPatterns
             gameObjects.Add(playerGo);
 
             
-            gameObjects.Add(EnemyFactory.Instance.CreateEnemy(EnemyType.SLOW));
-            gameObjects.Add(EnemyFactory.Instance.CreateEnemy(EnemyType.FAST));
-            gameObjects.Add(EnemyFactory.Instance.CreateEnemy(EnemyType.MULTIPLE));
+            //gameObjects.Add(EnemyFactory.Instance.CreateEnemy(EnemyType.SLOW));
+            //gameObjects.Add(EnemyFactory.Instance.CreateEnemy(EnemyType.FAST));
+            //gameObjects.Add(EnemyFactory.Instance.CreateEnemy(EnemyType.MULTIPLE));
 
 
             foreach (var gameObject in gameObjects)
@@ -100,6 +104,7 @@ namespace DesignPatterns
                 gameObject.Update();
             }
 
+            SpawnEnemies();
             base.Update(gameTime);
             Cleanup();
         }
@@ -125,7 +130,7 @@ namespace DesignPatterns
 
         internal void Destroy(GameObject gameObjectToDestroy)
         {
-            Debug.WriteLine("something destroyed");
+            Debug.WriteLine("Destroyed gameobject");
             destroyedGameObjects.Add(gameObjectToDestroy);
         }
 
@@ -146,6 +151,17 @@ namespace DesignPatterns
             }
             destroyedGameObjects.Clear();
             newGameObjects.Clear();
+        }
+
+        private void SpawnEnemies()
+        {
+            lastSpawn += DeltaTime;
+            if (lastSpawn > spawnTime)
+            {
+                GameObject go = EnemyGameObjectPool.Instance.GetGameObject();
+                instantiate(go);
+                lastSpawn = 0;
+            }
         }
     }
 }

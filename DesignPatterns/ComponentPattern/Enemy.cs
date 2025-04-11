@@ -17,6 +17,11 @@ namespace DesignPatterns.ComponentPattern
             this.movementStrategy = movementStrategy;
         }
 
+        public override void Start()
+        {
+            movementStrategy.RespawnAndSetNewPosition();
+        }
+
         public override void Update()
         {
             movementStrategy.Move();

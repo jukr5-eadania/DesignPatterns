@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -39,7 +40,8 @@ namespace DesignPatterns.Strategy
 
         public void RespawnAndSetNewPosition()
         {
-            throw new NotImplementedException();
+            Debug.WriteLine(currentMovementStrategy);
+            currentMovementStrategy.RespawnAndSetNewPosition();
         }
 
         private void ChangeStrategy()

@@ -1,4 +1,5 @@
 ﻿using DesignPatterns.ComponentPattern;
+using DesignPatterns.ObjectPool;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -34,7 +35,7 @@ namespace DesignPatterns.Strategy
                 gameObject.Transform.Position.X + 50 < 0 ||
                 gameObject.Transform.Position.X - 50 > GameWorld.Instance.Width)
             {
-                RespawnAndSetNewPosition();
+                EnemyGameObjectPool.Instance.ReleaseObject(gameObject);
             }
         }
 
