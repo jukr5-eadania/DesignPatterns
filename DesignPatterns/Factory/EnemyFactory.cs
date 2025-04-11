@@ -1,4 +1,6 @@
 ﻿using DesignPatterns.ComponentPattern;
+using DesignPatterns.Strategy;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DesignPatterns.Factory
 {
-    public enum EnemyType { SLOW, FAST }
+    public enum EnemyType { SLOW, FAST, MULTIPLE }
     public class EnemyFactory : GameObjectFactory
     {
         private static EnemyFactory instance;
@@ -39,12 +41,19 @@ namespace DesignPatterns.Factory
             switch (enemyType)
             {
                 case EnemyType.SLOW:
-                    enemyGo.AddComponent<Enemy>(50);
                     enemySpriteRenderer.SetSprite("Sprites\\enemyBlue\\enemyBlue1");
+                    enemyGo.AddComponent<Enemy>(new TopToBottomMovement(enemyGo, 50f, new Vector2(0,1)));
                     break;
                 case EnemyType.FAST:
-                    enemyGo.AddComponent<Enemy>(100);
-                    enemySpriteRenderer.SetSprite("Sprites\\enemyGreen\\enemyGreen1");
+                    enemySpriteRenderer.SetSprite("Sprites\\enemyGreen\\enemyGreen2");
+                    enemyGo.AddComponent<Enemy>(new DiagonalMovement(enemyGo, 100f));
+                    break;
+                case EnemyType.MULTIPLE:
+                    enemySpriteRenderer.SetSprite("Sprites\\enemyRed\\enemyRed3");
+                    enemyGo.AddComponent<Enemy>(new MultipleMovement(new List<IMovementStrategy> { 
+                        new TopToBottomMovement(enemyGo, 50f, new Vector2(0, 1)), 
+                        new DiagonalMovement(enemyGo, 100f) 
+                    }));
                     break;
                 default:
                     break;

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
+using DesignPatterns.Strategy;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,45 +10,16 @@ namespace DesignPatterns.ComponentPattern
 {
     public class Enemy : Component
     {
-        private float speed = 10;
-        private Vector2 velocity;
+        private IMovementStrategy movementStrategy;
 
-        public Enemy(GameObject gameObject, float speed) : base(gameObject)
+        public Enemy(GameObject gameObject, IMovementStrategy movementStrategy) : base(gameObject)
         {
-            velocity = new Vector2(0, 1);
-            this.speed = speed;
-        }
-
-        public override void Start()
-        {
-            SetRandomPositionOutsideOfScreen();
-        }
-
-        public void SetRandomPositionOutsideOfScreen()
-        {
-            Random rnd = new();
-            float xRandomCoord = rnd.Next(0, GameWorld.Instance.Width);
-            float yCoordOutsideScreen = -((SpriteRenderer)gameObject.getComponent<SpriteRenderer>()).Sprite.Height / 2;
-            gameObject.Transform.Position = new Vector2(xRandomCoord, yCoordOutsideScreen);
+            this.movementStrategy = movementStrategy;
         }
 
         public override void Update()
         {
-            Move();
-            if (GameWorld.Instance.Height < gameObject.Transform.Position.Y - 50)
-            {
-                SetRandomPositionOutsideOfScreen();
-            }
-        }
-
-        private void Move()
-        {
-            if (velocity != Vector2.Zero)
-            {
-                velocity.Normalize();
-            }
-
-            gameObject.Transform.Translate(velocity*speed*GameWorld.Instance.DeltaTime);
+            movementStrategy.Move();
         }
     }
 }

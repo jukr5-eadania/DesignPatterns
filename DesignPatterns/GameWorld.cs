@@ -55,6 +55,7 @@ namespace DesignPatterns
             
             gameObjects.Add(EnemyFactory.Instance.CreateEnemy(EnemyType.SLOW));
             gameObjects.Add(EnemyFactory.Instance.CreateEnemy(EnemyType.FAST));
+            gameObjects.Add(EnemyFactory.Instance.CreateEnemy(EnemyType.MULTIPLE));
 
 
             foreach (var gameObject in gameObjects)
